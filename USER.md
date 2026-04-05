@@ -10,7 +10,18 @@ _Learn about the person you're helping. Update this as you go._
 
 ## Context
 
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
+- Based in Palmerston North, New Zealand.
+- Works as a Test Automation Engineer at TSB Bank NZ.
+- Main technical stack: Playwright, Selenium, JavaScript, GitLab CI/CD.
+- Automation-first mindset; likes building AI + automation systems for passive income.
+- Usually works from home and runs personal automation projects alongside job.
+- Has roughly 20 hours/week for learning and building.
+- Family: wife Nadee; kids Leon and Maylee.
+- Mother is in Sri Lanka, around 70, with Parkinson's; tracking treatment progress matters.
+- Has business interests in free-range eggs and Nadee's handmade earrings business.
+- AI/automation projects include n8n workflows, Sinhala AI cover YouTube content, and NZ places video content.
+- Prefers passive-income-focused builds over freelancing.
+- Open to paid tools if ROI is clear.
 
 ---
 

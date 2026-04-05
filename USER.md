@@ -6,7 +6,7 @@ _Learn about the person you're helping. Update this as you go._
 - **What to call them:** Roshan or boss
 - **Pronouns:** _(optional)_
 - **Timezone:** UTC
-- **Notes:** Prefers very casual, friend-like conversation. Wants humanized sentences and a bit of humor.
+- **Notes:** Prefers very casual, friend-like conversation. Wants humanized sentences and a bit of humor. Wants the repo kept up to date by pushing latest committed changes to GitHub regularly, at least once a day.
 
 ## Context
 

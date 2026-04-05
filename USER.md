@@ -17,6 +17,7 @@ _Learn about the person you're helping. Update this as you go._
 - Usually works from home and runs personal automation projects alongside job.
 - Has roughly 20 hours/week for learning and building.
 - Family: wife Nadee; kids Leon and Maylee.
+- Wife's email: nadee.ipost@gmail.com
 - Mother is in Sri Lanka, around 70, with Parkinson's; tracking treatment progress matters.
 - Has business interests in free-range eggs and Nadee's handmade earrings business.
 - AI/automation projects include n8n workflows, Sinhala AI cover YouTube content, and NZ places video content.

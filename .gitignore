@@ -1,0 +1,7 @@
+.notion.json
+.wordpress-mayleotales.json
+.env
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

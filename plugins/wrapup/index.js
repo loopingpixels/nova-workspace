@@ -5,12 +5,38 @@ import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 
 function collectText(payloads) {
   if (!Array.isArray(payloads)) return '';
-  return payloads
-    .flatMap((item) => Array.isArray(item?.content) ? item.content : [])
-    .filter((part) => part?.type === 'text' && typeof part.text === 'string')
-    .map((part) => part.text)
-    .join('\n')
-    .trim();
+
+  const texts = [];
+
+  for (const item of payloads) {
+    if (typeof item?.text === 'string' && item.text.trim()) texts.push(item.text.trim());
+    if (typeof item?.message === 'string' && item.message.trim()) texts.push(item.message.trim());
+    if (typeof item?.content === 'string' && item.content.trim()) texts.push(item.content.trim());
+
+    if (Array.isArray(item?.content)) {
+      for (const part of item.content) {
+        if (typeof part?.text === 'string' && part.text.trim()) texts.push(part.text.trim());
+        if (typeof part?.value === 'string' && part.value.trim()) texts.push(part.value.trim());
+        if (typeof part?.content === 'string' && part.content.trim()) texts.push(part.content.trim());
+      }
+    }
+  }
+
+  return texts.join('\n').trim();
+}
+
+function collectDebug(result) {
+  try {
+    const parts = [];
+    if (result?.status) parts.push(`status=${String(result.status)}`);
+    if (result?.finishReason) parts.push(`finishReason=${String(result.finishReason)}`);
+    if (typeof result?.message === 'string' && result.message.trim()) parts.push(`message=${result.message.trim()}`);
+    if (typeof result?.text === 'string' && result.text.trim()) parts.push(`text=${result.text.trim()}`);
+    if (result?.payloads) parts.push(`payloadCount=${Array.isArray(result.payloads) ? result.payloads.length : 'non-array'}`);
+    return parts.join(' | ');
+  } catch {
+    return '';
+  }
 }
 
 export default definePluginEntry({
@@ -52,9 +78,19 @@ export default definePluginEntry({
             allowModelOverride: true,
             disableTools: false,
           });
-          const text = collectText(result?.payloads);
+          const text = [
+            collectText(result?.payloads),
+            typeof result?.text === 'string' ? result.text.trim() : '',
+            typeof result?.message === 'string' ? result.message.trim() : ''
+          ].filter(Boolean).join('\n').trim();
+
+          if (text) {
+            return { text };
+          }
+
+          const debug = collectDebug(result);
           return {
-            text: text || 'Wrap-up completed with no text output. RESET_SAFE: NO'
+            text: `Wrap-up completed with no text output.${debug ? ` Debug: ${debug}` : ''}\nRESET_SAFE: NO`
           };
         } catch (error) {
           return {

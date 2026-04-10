@@ -1,0 +1,9 @@
+{
+  "id": "wrapup-command",
+  "name": "Wrapup Command",
+  "description": "Adds a /wrapup command to prepare memory/workflow sync before reset",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false
+  }
+}

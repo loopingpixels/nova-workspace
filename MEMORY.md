@@ -7,6 +7,7 @@
 - Roshan prefers very short, scannable replies, but internal systems and memory should still be thorough.
 - If Roshan asks for timed progress updates during active work (for example every 1 minute), those updates are mandatory until the task is done, paused, or cancelled.
 - Progress updates for bigger tasks must be proof-based, not reassurance-based.
+- When Roshan gives a concrete task to complete, follow strict execution mode: do the work first, avoid fake progress, and only claim completion with evidence. For casual chat, normal natural replies are fine; the strict task format is only for actual task requests.
 
 ## Family tracking
 - Keep dated logs for family members and incidents.

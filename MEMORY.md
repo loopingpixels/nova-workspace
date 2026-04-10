@@ -8,6 +8,8 @@
 - If Roshan asks for timed progress updates during active work (for example every 1 minute), those updates are mandatory until the task is done, paused, or cancelled.
 - Progress updates for bigger tasks must be proof-based, not reassurance-based.
 - When Roshan gives a concrete task to complete, follow strict execution mode: do the work first, avoid fake progress, and only claim completion with evidence. For casual chat, normal natural replies are fine; the strict task format is only for actual task requests.
+- Durable OpenClaw debugging rule: when fixing managed agents or embedded agent runs, verify the actual live runtime/session path first instead of assuming an older standalone bot/module path.
+- Durable embedded agent rule: `runEmbeddedPiAgent(...)` workspace/model/auth resolution depends on `agentId`; forcing provider/auth alone is not enough if the runtime inherits the wrong agent context.
 
 ## Family tracking
 - Keep dated logs for family members and incidents.

@@ -15,7 +15,7 @@
       "price": 1378.85,
       "in_stock": false,
       "title": "META Quest 3 512GB Mixed Reality Headset with 2x Quest Touch Plus Controllers | The Warehouse",
-      "checked_at": "2026-04-10T09:46:50Z",
+      "checked_at": "2026-04-10T10:04:32Z",
       "raw_status": "ok",
       "validation": "ok",
       "source_type": "direct"
@@ -35,7 +35,7 @@
       "price": 1045.0,
       "in_stock": false,
       "title": "Meta Quest 3 512GB Mixed Reality Headset - Phone Warehouse",
-      "checked_at": "2026-04-10T09:46:50Z",
+      "checked_at": "2026-04-10T10:04:32Z",
       "raw_status": "ok",
       "validation": "ok",
       "source_type": "direct"
@@ -45,10 +45,20 @@
       "price": 939.0,
       "in_stock": true,
       "title": null,
-      "checked_at": "2026-04-10T09:46:50Z",
+      "checked_at": "2026-04-10T10:04:32Z",
       "raw_status": "ok",
       "validation": "ok",
       "source_type": "comparison"
+    },
+    "Meta Store": {
+      "url": "https://www.meta.com/quest/quest-3/",
+      "price": 939.99,
+      "in_stock": false,
+      "title": "Meta Quest 3: Next-gen virtual reality headset | Meta Store (en-NZ)",
+      "checked_at": "2026-04-10T10:04:32Z",
+      "raw_status": "browser_ok",
+      "validation": "ok",
+      "source_type": "browser_fallback"
     }
   }
 }

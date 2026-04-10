@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
+import sys
 from dataclasses import dataclass
 from datetime import datetime, UTC
 from pathlib import Path
@@ -14,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TRACKERS = ROOT / 'trackers.json'
 STATE_DIR = ROOT / 'state'
 HISTORY_DIR = ROOT / 'history'
+BROWSER_FETCH = ROOT / 'scripts' / 'browser_fetch_price.py'
+BROWSER_PYTHON = Path('/home/roshan/.openclaw/workspace-nova/.price-tracker-venv/bin/python')
 
 GENERIC_PRICE_PATTERNS = [
     re.compile(r'priceCurrency"\s*:\s*"NZD"\s*,\s*"price"\s*:\s*"([0-9]+(?:[\.,][0-9]{2})?)"', re.I),
@@ -144,17 +148,39 @@ def choose_adapter(url: str):
         return extract_price_phonewarehouse, extract_stock_generic, 'direct'
     if 'pricespy.co.nz' in host:
         return extract_price_pricespy, extract_stock_generic, 'comparison'
+    if 'meta.com' in host:
+        return extract_price_generic, extract_stock_generic, 'browser_fallback'
     return extract_price_generic, extract_stock_generic, 'direct'
 
 
-def validate_observation(price: float | None, title: str | None, tracker: dict) -> str:
+def browser_fetch(url: str) -> tuple[float | None, str | None, str]:
+    if not BROWSER_PYTHON.exists() or not BROWSER_FETCH.exists():
+        return None, None, 'browser_unavailable'
+    proc = subprocess.run([str(BROWSER_PYTHON), str(BROWSER_FETCH), url], capture_output=True, text=True)
+    if proc.returncode != 0:
+        return None, None, f'browser_error:{proc.returncode}'
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return None, None, 'browser_bad_json'
+    return payload.get('price'), payload.get('title'), 'browser_ok'
+
+
+def validate_observation(price: float | None, title: str | None, tracker: dict, store_name: str | None = None) -> str:
     if price is None:
         return 'no_price'
     if not sane_price(price):
         return 'invalid_price'
     model = tracker.get('model', '').lower()
-    if title and model and model not in title.lower():
-        return 'title_mismatch'
+    normalized_model_tokens = [token for token in re.split(r'\s+', model) if token]
+    title_lower = (title or '').lower()
+    if store_name == 'Meta Store':
+        if 'meta quest 3' in title_lower:
+            return 'ok'
+    if title and model:
+        if model not in title_lower:
+            if not all(token in title_lower for token in normalized_model_tokens[:3]):
+                return 'title_mismatch'
     return 'ok'
 
 
@@ -192,7 +218,14 @@ def main() -> int:
                 title = extract_title(html)
                 price = price_extractor(html)
                 in_stock = stock_extractor(html)
-                validation = validate_observation(price, title, tracker)
+                raw_status = 'ok'
+                if price is None and source_type == 'browser_fallback':
+                    browser_price, browser_title, browser_status = browser_fetch(url)
+                    if browser_price is not None:
+                        price = browser_price
+                        title = browser_title or title
+                        raw_status = browser_status
+                validation = validate_observation(price, title, tracker, store_name)
                 if validation != 'ok':
                     price = None
                 obs = Observation(
@@ -203,7 +236,7 @@ def main() -> int:
                     in_stock=in_stock,
                     title=title,
                     checked_at=now,
-                    raw_status='ok',
+                    raw_status=raw_status,
                     validation=validation,
                     source_type=source_type,
                 )

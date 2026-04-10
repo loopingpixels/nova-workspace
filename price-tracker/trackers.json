@@ -19,6 +19,10 @@
         {
           "name": "PriceSpy",
           "url": "https://pricespy.co.nz/product.php?p=12259426"
+        },
+        {
+          "name": "Meta Store",
+          "url": "https://www.meta.com/quest/quest-3/"
         }
       ],
       "enabled": true

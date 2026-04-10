@@ -2,6 +2,7 @@
 .wordpress-mayleotales.json
 .env
 .venv/
+.price-tracker-venv/
 __pycache__/
 *.pyc
 .DS_Store

@@ -13,6 +13,8 @@
 - Maintain structured family notes under `memory/family/`.
 - Interpret common voice-typing mistakes naturally without fuss.
 - "Meili" should usually be corrected to "Maylee".
+- In family stories, Roshan may be referred to as "Thaththi" (Dad in Sinhala).
+- Mum is often referred to as "Mimi"; this started because Leon pronounced "mum" as "mimi", and Maylee followed it too.
 
 ## Important personal details
 - Roshan's IRD number: `117-574-342`

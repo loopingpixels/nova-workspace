@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "stores": [
+    {
+      "name": "PB Tech",
+      "host": "pbtech.co.nz",
+      "status": "blocked",
+      "reason": "Anti-bot/interstitial prevents reliable direct or browser-backed price extraction in current environment"
+    },
+    {
+      "name": "Mighty Ape",
+      "host": "mightyape.co.nz",
+      "status": "blocked",
+      "reason": "403 / anti-bot protection prevents reliable direct or browser-backed price extraction in current environment"
+    }
+  ]
+}

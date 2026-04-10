@@ -5,3 +5,5 @@
 __pycache__/
 *.pyc
 .DS_Store
+price-tracker/scripts/__pycache__/
+price-tracker/history/

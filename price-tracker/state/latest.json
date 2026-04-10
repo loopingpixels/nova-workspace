@@ -1,1 +1,54 @@
-{}
+{
+  "meta-quest-3-512gb": {
+    "PB Tech": {
+      "url": "https://www.pbtech.co.nz/product/MVRMTA0021/META-Quest-3-512GB-Mixed-Reality-Headset-with-2x-Q",
+      "price": null,
+      "in_stock": false,
+      "title": "Buy the META Quest 3 512GB Mixed Reality Headset with 2x Quest Touch Plus... ( 899-00584-01 ) online - PBTech.co.nz",
+      "checked_at": "2026-04-10T08:37:38Z",
+      "raw_status": "ok",
+      "validation": "no_price",
+      "source_type": "direct"
+    },
+    "The Warehouse": {
+      "url": "https://www.thewarehouse.co.nz/p/meta-quest-3-512gb-mixed-reality-headset-with-2x-quest-touch-plus-controllers/M36443959.html",
+      "price": 1378.85,
+      "in_stock": false,
+      "title": "META Quest 3 512GB Mixed Reality Headset with 2x Quest Touch Plus Controllers | The Warehouse",
+      "checked_at": "2026-04-10T08:37:38Z",
+      "raw_status": "ok",
+      "validation": "ok",
+      "source_type": "direct"
+    },
+    "Mighty Ape": {
+      "url": "https://www.mightyape.co.nz/mn/buy/meta-quest-3-512gb-breakthrough-mixed-reality-headset/",
+      "price": null,
+      "in_stock": null,
+      "title": null,
+      "checked_at": "2026-04-10T08:37:38Z",
+      "raw_status": "error:HTTPError:403",
+      "validation": "blocked",
+      "source_type": "direct"
+    },
+    "The Phone Warehouse": {
+      "url": "https://thephonewarehouse.co.nz/product/meta-quest-3-512gb-mixed-reality-headset/",
+      "price": 1045.0,
+      "in_stock": false,
+      "title": "Meta Quest 3 512GB Mixed Reality Headset - Phone Warehouse",
+      "checked_at": "2026-04-10T08:37:38Z",
+      "raw_status": "ok",
+      "validation": "ok",
+      "source_type": "direct"
+    },
+    "PriceSpy": {
+      "url": "https://pricespy.co.nz/product.php?p=12259426",
+      "price": 939.0,
+      "in_stock": true,
+      "title": null,
+      "checked_at": "2026-04-10T08:37:38Z",
+      "raw_status": "ok",
+      "validation": "ok",
+      "source_type": "comparison"
+    }
+  }
+}

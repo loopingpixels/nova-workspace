@@ -6,16 +6,22 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, UTC
 from pathlib import Path
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 ROOT = Path(__file__).resolve().parents[1]
 TRACKERS = ROOT / 'trackers.json'
 STATE_DIR = ROOT / 'state'
 HISTORY_DIR = ROOT / 'history'
 
-PRICE_PATTERNS = [
-    re.compile(r'\$\s*([0-9]+(?:[\.,][0-9]{2})?)'),
+GENERIC_PRICE_PATTERNS = [
+    re.compile(r'priceCurrency"\s*:\s*"NZD"\s*,\s*"price"\s*:\s*"([0-9]+(?:[\.,][0-9]{2})?)"', re.I),
+    re.compile(r'"price"\s*:\s*"([0-9]+(?:[\.,][0-9]{2})?)"\s*,\s*"priceCurrency"\s*:\s*"NZD"', re.I),
+    re.compile(r'product:price:amount"\s*content="([0-9]+(?:[\.,][0-9]{2})?)"', re.I),
+    re.compile(r'woocommerce-Price-amount[^>]*>\s*<bdi>\s*\$?\s*([0-9]+(?:[\.,][0-9]{2})?)', re.I),
     re.compile(r'NZ\$\s*([0-9]+(?:[\.,][0-9]{2})?)', re.I),
+    re.compile(r'\$\s*([1-9][0-9]{1,4}(?:[\.,][0-9]{2})?)'),
 ]
 
 
@@ -29,6 +35,8 @@ class Observation:
     title: str | None
     checked_at: str
     raw_status: str
+    validation: str = 'ok'
+    source_type: str = 'direct'
 
 
 def fetch(url: str) -> str:
@@ -37,28 +45,117 @@ def fetch(url: str) -> str:
         return resp.read().decode('utf-8', errors='ignore')
 
 
-def extract_price(text: str) -> float | None:
-    for pattern in PRICE_PATTERNS:
-        match = pattern.search(text)
-        if match:
-            return float(match.group(1).replace(',', ''))
-    return None
+def extract_title(text: str) -> str | None:
+    m = re.search(r'<title>(.*?)</title>', text, re.I | re.S)
+    if not m:
+        return None
+    return re.sub(r'\s+', ' ', m.group(1)).strip()
 
 
-def extract_stock(text: str) -> bool | None:
+def extract_stock_generic(text: str) -> bool | None:
     lowered = text.lower()
-    if 'out of stock' in lowered or 'sold out' in lowered:
+    if 'out of stock' in lowered or 'sold out' in lowered or 'unavailable' in lowered:
         return False
     if 'in stock' in lowered or 'available now' in lowered:
         return True
     return None
 
 
-def extract_title(text: str) -> str | None:
-    m = re.search(r'<title>(.*?)</title>', text, re.I | re.S)
-    if not m:
+def parse_price(raw: str | None) -> float | None:
+    if not raw:
         return None
-    return re.sub(r'\s+', ' ', m.group(1)).strip()
+    try:
+        value = float(raw.replace(',', ''))
+    except ValueError:
+        return None
+    return value
+
+
+def sane_price(value: float | None) -> bool:
+    return value is not None and 50 <= value <= 10000
+
+
+def extract_price_generic(text: str) -> float | None:
+    for pattern in GENERIC_PRICE_PATTERNS:
+        match = pattern.search(text)
+        if match:
+            price = parse_price(match.group(1))
+            if sane_price(price):
+                return price
+    return None
+
+
+def extract_price_pbtech(text: str) -> float | None:
+    for pattern in [
+        re.compile(r'product:price:amount"\s*content="([0-9]+(?:[\.,][0-9]{2})?)"', re.I),
+        re.compile(r'price\s*[:=]\s*"?([0-9]{3,5}(?:[\.,][0-9]{2})?)"?', re.I),
+    ]:
+        m = pattern.search(text)
+        if m:
+            price = parse_price(m.group(1))
+            if sane_price(price):
+                return price
+    return None
+
+
+def extract_price_warehouse(text: str) -> float | None:
+    m = re.search(r'priceCurrency"\s*:\s*"NZD"\s*,\s*"price"\s*:\s*"([0-9]+(?:[\.,][0-9]{2})?)"', text, re.I)
+    if m:
+        price = parse_price(m.group(1))
+        if sane_price(price):
+            return price
+    return None
+
+
+def extract_price_phonewarehouse(text: str) -> float | None:
+    for pattern in [
+        re.compile(r'woocommerce-Price-amount[^>]*>\s*<bdi>\s*\$?\s*([0-9]+(?:[\.,][0-9]{2})?)', re.I),
+        re.compile(r'"display_price"\s*:\s*([0-9]+(?:[\.,][0-9]{2})?)', re.I),
+        re.compile(r'"price"\s*:\s*"([0-9]+(?:[\.,][0-9]{2})?)"', re.I),
+    ]:
+        m = pattern.search(text)
+        if m:
+            price = parse_price(m.group(1))
+            if sane_price(price):
+                return price
+    return None
+
+
+def extract_price_pricespy(text: str) -> float | None:
+    for pattern in [
+        re.compile(r'The best price.*?\$([0-9]+(?:[\.,][0-9]{2})?)', re.I | re.S),
+        re.compile(r'from \$([0-9]+(?:[\.,][0-9]{2})?)', re.I),
+    ]:
+        m = pattern.search(text)
+        if m:
+            price = parse_price(m.group(1))
+            if sane_price(price):
+                return price
+    return None
+
+
+def choose_adapter(url: str):
+    host = urlparse(url).netloc.lower()
+    if 'pbtech.co.nz' in host:
+        return extract_price_pbtech, extract_stock_generic, 'direct'
+    if 'thewarehouse.co.nz' in host:
+        return extract_price_warehouse, extract_stock_generic, 'direct'
+    if 'thephonewarehouse.co.nz' in host:
+        return extract_price_phonewarehouse, extract_stock_generic, 'direct'
+    if 'pricespy.co.nz' in host:
+        return extract_price_pricespy, extract_stock_generic, 'comparison'
+    return extract_price_generic, extract_stock_generic, 'direct'
+
+
+def validate_observation(price: float | None, title: str | None, tracker: dict) -> str:
+    if price is None:
+        return 'no_price'
+    if not sane_price(price):
+        return 'invalid_price'
+    model = tracker.get('model', '').lower()
+    if title and model and model not in title.lower():
+        return 'title_mismatch'
+    return 'ok'
 
 
 def load_json(path: Path, default):
@@ -89,17 +186,39 @@ def main() -> int:
         for store in tracker.get('stores', []):
             url = store['url']
             store_name = store['name']
+            price_extractor, stock_extractor, source_type = choose_adapter(url)
             try:
                 html = fetch(url)
+                title = extract_title(html)
+                price = price_extractor(html)
+                in_stock = stock_extractor(html)
+                validation = validate_observation(price, title, tracker)
+                if validation != 'ok':
+                    price = None
                 obs = Observation(
                     tracker_id=tracker_id,
                     store_name=store_name,
                     url=url,
-                    price=extract_price(html),
-                    in_stock=extract_stock(html),
-                    title=extract_title(html),
+                    price=price,
+                    in_stock=in_stock,
+                    title=title,
                     checked_at=now,
                     raw_status='ok',
+                    validation=validation,
+                    source_type=source_type,
+                )
+            except HTTPError as exc:
+                obs = Observation(
+                    tracker_id=tracker_id,
+                    store_name=store_name,
+                    url=url,
+                    price=None,
+                    in_stock=None,
+                    title=None,
+                    checked_at=now,
+                    raw_status=f'error:HTTPError:{exc.code}',
+                    validation='blocked',
+                    source_type=source_type,
                 )
             except Exception as exc:
                 obs = Observation(
@@ -111,6 +230,8 @@ def main() -> int:
                     title=None,
                     checked_at=now,
                     raw_status=f'error:{type(exc).__name__}',
+                    validation='blocked',
+                    source_type=source_type,
                 )
 
             previous = tracker_state.get(store_name)
@@ -121,6 +242,8 @@ def main() -> int:
                 'title': obs.title,
                 'checked_at': obs.checked_at,
                 'raw_status': obs.raw_status,
+                'validation': obs.validation,
+                'source_type': obs.source_type,
             }
             tracker_state[store_name] = current
             with history_file.open('a') as fh:

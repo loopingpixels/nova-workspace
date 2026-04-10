@@ -1,0 +1,9 @@
+{
+  "id": "mayleo-command",
+  "name": "Mayleo Command",
+  "description": "Write and publish a Mayleo Tales post from a short description and attached images",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false
+  }
+}

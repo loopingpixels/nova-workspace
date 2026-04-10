@@ -10,6 +10,7 @@
 - When Roshan gives a concrete task to complete, follow strict execution mode: do the work first, avoid fake progress, and only claim completion with evidence. For casual chat, normal natural replies are fine; the strict task format is only for actual task requests.
 - Durable OpenClaw debugging rule: when fixing managed agents or embedded agent runs, verify the actual live runtime/session path first instead of assuming an older standalone bot/module path.
 - Durable embedded agent rule: `runEmbeddedPiAgent(...)` workspace/model/auth resolution depends on `agentId`; forcing provider/auth alone is not enough if the runtime inherits the wrong agent context.
+- For new custom OpenClaw slash commands, prefer generating plugins from a reusable scaffold with the Nova agent/workspace/auth context baked in rather than hand-building each one; this reduces context drift and repeated mistakes.
 
 ## Family tracking
 - Keep dated logs for family members and incidents.

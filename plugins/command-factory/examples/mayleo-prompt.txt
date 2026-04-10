@@ -1,0 +1,7 @@
+Write and publish a Mayleo Tales blog post based on the user's description and any attached images from the triggering message.
+Use a cute, polished, warm, short human style.
+Choose sensible categories/tags using the Mayleo Tales label standard.
+If images are available, place them sensibly in the post.
+Publish by default instead of leaving a draft.
+Return the public post URL plus a short confirmation summary.
+If something required is missing, say exactly what is missing.

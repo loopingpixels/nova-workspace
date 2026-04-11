@@ -11,6 +11,9 @@
 - Durable OpenClaw debugging rule: when fixing managed agents or embedded agent runs, verify the actual live runtime/session path first instead of assuming an older standalone bot/module path.
 - Durable embedded agent rule: `runEmbeddedPiAgent(...)` workspace/model/auth resolution depends on `agentId`; forcing provider/auth alone is not enough if the runtime inherits the wrong agent context.
 - For new custom OpenClaw slash commands, prefer generating plugins from a reusable scaffold with the Nova agent/workspace/auth context baked in rather than hand-building each one; this reduces context drift and repeated mistakes.
+- Scheduled morning brief is cron-driven, not heartbeat-driven. If it appears "missing," check whether the cron actually ran that day before treating it as a runtime failure.
+- Prefer explicit per-agent heartbeat config over ambiguous global heartbeat toggles/state.
+- For Gmail hook/debug noise, keep hook ingress pinned to Nova (`agent:nova:hook:gmail`) and verify the real process owning the webhook port before changing config.
 
 ## Family tracking
 - Keep dated logs for family members and incidents.

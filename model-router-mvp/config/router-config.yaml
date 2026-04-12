@@ -1,0 +1,159 @@
+version: 1
+providers:
+  openrouter:
+    type: openrouter
+    enabled: true
+    baseUrl: https://openrouter.ai/api/v1
+
+policy:
+  defaultMaxAttempts: 3
+  sameModelRetryLimit: 1
+  disableAfterConsecutiveFailures: 4
+  cooldownAfterRetryableFailures: 3
+  disableOnPaidClassForFreeStacks: true
+  premiumPriceClasses: [premium]
+
+taskTypeToStack:
+  short_reply: fast-simple-text
+  general_writing_long: long-form-text
+  coding_debug: premium-reasoning
+  reasoning_hard: premium-reasoning
+
+profiles:
+  default-agent-reply:
+    stack: fast-simple-text
+    maxAttempts: 3
+    premiumPolicy: never
+    maxCostUsd: 0.01
+  long-form-writer:
+    stack: long-form-text
+    maxAttempts: 3
+    premiumPolicy: explicit-only
+    maxCostUsd: 0.08
+  coding-hard:
+    stack: premium-reasoning
+    maxAttempts: 4
+    premiumPolicy: explicit-or-escalated
+    maxCostUsd: 0.5
+
+models:
+  - id: openrouter:openai/gpt-4o-mini
+    provider: openrouter
+    remoteModelId: openai/gpt-4o-mini
+    modality: text
+    pricing: { class: cheap, inputPer1M: 0.15, outputPer1M: 0.6 }
+    capabilities: { shortReply: true, longWriting: true, coding: medium, reasoning: medium }
+    constraints: { maxContext: 128000, maxOutputTokens: 16000 }
+    speedTier: fast
+    reliabilityTier: high
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:qwen/qwen-2.5-7b-instruct
+    provider: openrouter
+    remoteModelId: qwen/qwen-2.5-7b-instruct
+    modality: text
+    pricing: { class: free, inputPer1M: 0, outputPer1M: 0 }
+    capabilities: { shortReply: true, longWriting: medium, coding: low, reasoning: low }
+    constraints: { maxContext: 32768, maxOutputTokens: 4096 }
+    speedTier: fast
+    reliabilityTier: medium
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:mistralai/mistral-small-3.1-24b-instruct
+    provider: openrouter
+    remoteModelId: mistralai/mistral-small-3.1-24b-instruct
+    modality: text
+    pricing: { class: cheap, inputPer1M: 0.1, outputPer1M: 0.3 }
+    capabilities: { shortReply: true, longWriting: true, coding: medium, reasoning: medium }
+    constraints: { maxContext: 32768, maxOutputTokens: 8192 }
+    speedTier: fast
+    reliabilityTier: high
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:qwen/qwen-2.5-72b-instruct
+    provider: openrouter
+    remoteModelId: qwen/qwen-2.5-72b-instruct
+    modality: text
+    pricing: { class: cheap, inputPer1M: 0.12, outputPer1M: 0.32 }
+    capabilities: { shortReply: true, longWriting: true, coding: medium, reasoning: medium }
+    constraints: { maxContext: 131072, maxOutputTokens: 12000 }
+    speedTier: medium
+    reliabilityTier: high
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:meta-llama/llama-3.3-70b-instruct
+    provider: openrouter
+    remoteModelId: meta-llama/llama-3.3-70b-instruct
+    modality: text
+    pricing: { class: cheap, inputPer1M: 0.12, outputPer1M: 0.3 }
+    capabilities: { shortReply: true, longWriting: true, coding: medium, reasoning: medium }
+    constraints: { maxContext: 131072, maxOutputTokens: 8192 }
+    speedTier: medium
+    reliabilityTier: high
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:deepseek/deepseek-chat-v3-0324
+    provider: openrouter
+    remoteModelId: deepseek/deepseek-chat-v3-0324
+    modality: text
+    pricing: { class: cheap, inputPer1M: 0.27, outputPer1M: 1.1 }
+    capabilities: { shortReply: true, longWriting: true, coding: high, reasoning: high }
+    constraints: { maxContext: 64000, maxOutputTokens: 12000 }
+    speedTier: medium
+    reliabilityTier: medium
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:qwen/qwen-2.5-coder-32b-instruct
+    provider: openrouter
+    remoteModelId: qwen/qwen-2.5-coder-32b-instruct
+    modality: text
+    pricing: { class: cheap, inputPer1M: 0.18, outputPer1M: 0.72 }
+    capabilities: { shortReply: true, longWriting: true, coding: high, reasoning: high }
+    constraints: { maxContext: 32768, maxOutputTokens: 8192 }
+    speedTier: medium
+    reliabilityTier: high
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: false }
+    lifecycle: { state: active, source: curated }
+  - id: openrouter:anthropic/claude-3.7-sonnet
+    provider: openrouter
+    remoteModelId: anthropic/claude-3.7-sonnet
+    modality: text
+    pricing: { class: premium, inputPer1M: 3, outputPer1M: 15 }
+    capabilities: { shortReply: true, longWriting: true, coding: high, reasoning: high }
+    constraints: { maxContext: 200000, maxOutputTokens: 16000 }
+    speedTier: medium
+    reliabilityTier: high
+    policy: { enabled: true, premiumAllowedOnlyWhenExplicit: true }
+    lifecycle: { state: active, source: curated }
+
+stacks:
+  fast-simple-text:
+    modality: text
+    minHealthyModels: 3
+    premiumPolicy: never
+    selectionDefaults: { reasoningDepth: low, outputLength: short, speedSensitivity: high }
+    models:
+      - openrouter:qwen/qwen-2.5-7b-instruct
+      - openrouter:mistralai/mistral-small-3.1-24b-instruct
+      - openrouter:openai/gpt-4o-mini
+      - openrouter:qwen/qwen-2.5-72b-instruct
+  long-form-text:
+    modality: text
+    minHealthyModels: 3
+    premiumPolicy: explicit-only
+    selectionDefaults: { reasoningDepth: medium, outputLength: long, speedSensitivity: medium }
+    models:
+      - openrouter:meta-llama/llama-3.3-70b-instruct
+      - openrouter:qwen/qwen-2.5-72b-instruct
+      - openrouter:mistralai/mistral-small-3.1-24b-instruct
+      - openrouter:openai/gpt-4o-mini
+  premium-reasoning:
+    modality: text
+    minHealthyModels: 3
+    premiumPolicy: explicit-or-escalated
+    selectionDefaults: { reasoningDepth: high, outputLength: medium, reliabilityRequirement: high }
+    models:
+      - openrouter:qwen/qwen-2.5-coder-32b-instruct
+      - openrouter:deepseek/deepseek-chat-v3-0324
+      - openrouter:anthropic/claude-3.7-sonnet
+      - openrouter:qwen/qwen-2.5-72b-instruct

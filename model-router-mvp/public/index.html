@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model Router MVP</title>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 14px; padding: 18px; box-shadow: 0 8px 30px rgba(0,0,0,.2); }
+    textarea, select, input, button { width: 100%; box-sizing: border-box; border-radius: 10px; border: 1px solid #475569; background: #0b1220; color: #e2e8f0; padding: 10px 12px; }
+    button { background: #2563eb; border: none; cursor: pointer; font-weight: 700; }
+    button:hover { background: #1d4ed8; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #020617; padding: 12px; border-radius: 10px; border: 1px solid #1e293b; }
+    h1,h2,h3 { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #1e293b; vertical-align: top; }
+    .muted { color: #94a3b8; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #1e293b; margin-right: 6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Model Router MVP</h1>
+    <p class="muted">Local demo for routing, fallback, telemetry, and maintenance review.</p>
+    <div class="grid">
+      <div class="card">
+        <h2>Test a route</h2>
+        <div class="row">
+          <div>
+            <label>Task type</label>
+            <select id="taskType">
+              <option value="short_reply">short_reply</option>
+              <option value="general_writing_long">general_writing_long</option>
+              <option value="coding_debug">coding_debug</option>
+              <option value="reasoning_hard">reasoning_hard</option>
+            </select>
+          </div>
+          <div>
+            <label>Profile</label>
+            <select id="profileId">
+              <option value="">(auto)</option>
+              <option value="default-agent-reply">default-agent-reply</option>
+              <option value="long-form-writer">long-form-writer</option>
+              <option value="coding-hard">coding-hard</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Reasoning</label>
+            <select id="reasoningDepth">
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
+            </select>
+          </div>
+          <div>
+            <label>Output length</label>
+            <select id="outputLength">
+              <option value="short">short</option>
+              <option value="medium">medium</option>
+              <option value="long">long</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Premium policy</label>
+            <select id="premiumPolicy">
+              <option value="never">never</option>
+              <option value="explicit-only">explicit-only</option>
+              <option value="explicit-or-escalated">explicit-or-escalated</option>
+            </select>
+          </div>
+          <div>
+            <label>Mock mode</label>
+            <select id="mockMode">
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+        </div>
+        <label>Prompt</label>
+        <textarea id="prompt" rows="7">Give me a short explanation of why model routing matters.</textarea>
+        <div class="row" style="margin-top:12px;">
+          <div>
+            <label>Force model id (optional)</label>
+            <input id="forceModelId" placeholder="openrouter:qwen/qwen-2.5-7b-instruct" />
+          </div>
+          <div>
+            <label>Simulate failing models (comma separated ids)</label>
+            <input id="failModels" placeholder="openrouter:qwen/qwen-2.5-7b-instruct" />
+          </div>
+        </div>
+        <button id="runBtn">Run route</button>
+        <h3 style="margin-top:16px;">Route result</h3>
+        <pre id="routeOutput">Waiting…</pre>
+      </div>
+      <div class="card">
+        <h2>Live data</h2>
+        <button id="refreshBtn">Refresh data</button>
+        <div style="height: 12px"></div>
+        <h3>Stacks</h3>
+        <div id="stacks"></div>
+        <h3>Recent attempts</h3>
+        <div id="attempts"></div>
+        <h3>Latest maintenance</h3>
+        <pre id="maintenance">No report yet.</pre>
+      </div>
+    </div>
+  </div>
+  <script>
+    async function getJson(url, options) {
+      const res = await fetch(url, options);
+      return res.json();
+    }
+
+    async function refresh() {
+      const stacks = await getJson('/api/stacks');
+      document.getElementById('stacks').innerHTML = stacks.stacks.map(stack => `
+        <div class="card" style="padding:12px; margin-bottom:10px; background:#0b1220;">
+          <div><strong>${stack.stackId}</strong> <span class="pill">${stack.premiumPolicy}</span></div>
+          <table>
+            <thead><tr><th>Model</th><th>Price</th><th>Health</th><th>Status</th></tr></thead>
+            <tbody>
+              ${stack.models.map(m => `<tr><td>${m.modelId}</td><td>${m.pricingClass}</td><td>${m.healthScore}</td><td>${m.routingStatus}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      `).join('');
+
+      const attempts = await getJson('/api/attempts?limit=10');
+      document.getElementById('attempts').innerHTML = attempts.attempts.length
+        ? `<table><thead><tr><th>Time</th><th>Model</th><th>Outcome</th><th>Fallback</th></tr></thead><tbody>${attempts.attempts.map(a => `<tr><td>${a.createdAt}</td><td>${a.modelId}</td><td>${a.outcome}</td><td>${a.wasFallback ? 'yes' : 'no'}</td></tr>`).join('')}</tbody></table>`
+        : '<p class="muted">No attempts yet.</p>';
+
+      const maintenance = await getJson('/api/maintenance/latest');
+      document.getElementById('maintenance').textContent = JSON.stringify(maintenance.report, null, 2);
+    }
+
+    document.getElementById('runBtn').addEventListener('click', async () => {
+      const failModels = document.getElementById('failModels').value
+        .split(',')
+        .map(v => v.trim())
+        .filter(Boolean);
+      const payload = {
+        taskType: document.getElementById('taskType').value,
+        profileId: document.getElementById('profileId').value || undefined,
+        reasoningDepth: document.getElementById('reasoningDepth').value,
+        outputLength: document.getElementById('outputLength').value,
+        premiumPolicy: document.getElementById('premiumPolicy').value,
+        mockMode: document.getElementById('mockMode').value === 'true',
+        payload: { prompt: document.getElementById('prompt').value },
+        overrides: {},
+        simulate: { failModels },
+      };
+      const forceModelId = document.getElementById('forceModelId').value.trim();
+      if (forceModelId) payload.overrides.forceModelId = forceModelId;
+      const result = await getJson('/api/route', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      document.getElementById('routeOutput').textContent = JSON.stringify(result, null, 2);
+      await refresh();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', refresh);
+    refresh();
+  </script>
+</body>
+</html>

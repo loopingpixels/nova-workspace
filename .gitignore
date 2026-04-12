@@ -8,3 +8,6 @@ __pycache__/
 .DS_Store
 price-tracker/scripts/__pycache__/
 price-tracker/history/
+model-router-mvp/data/
+model-router-mvp/.env
+plugins/discord-admin/node_modules/

@@ -1,0 +1,17 @@
+{
+  "name": "model-router-mvp",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "maintenance": "node scripts/run-maintenance.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2",
+    "js-yaml": "^4.1.0"
+  }
+}

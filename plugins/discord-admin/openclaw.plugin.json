@@ -1,0 +1,10 @@
+{
+  "id": "discord-admin",
+  "name": "Discord Admin",
+  "description": "Discord channel and webhook management tools for Nova",
+  "entry": "index.js",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false
+  }
+}

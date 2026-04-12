@@ -1,0 +1,10 @@
+{
+  "name": "discord-admin-plugin",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^14.17.3",
+    "openclaw": "*"
+  }
+}

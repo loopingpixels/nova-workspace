@@ -5,9 +5,12 @@
 - If a one-time setup unlocks ongoing automation, prefer doing that.
 - Roshan strongly dislikes repetitive manual setup and does not want to keep repeating this preference.
 - Roshan prefers very short, scannable replies, but internal systems and memory should still be thorough.
+- When giving Roshan a local app or web URL for testing, include the machine IP-based URL as well as or instead of localhost, because he may open it from another computer.
 - If Roshan asks for timed progress updates during active work (for example every 1 minute), those updates are mandatory until the task is done, paused, or cancelled.
 - Progress updates for bigger tasks must be proof-based, not reassurance-based.
 - When Roshan gives a concrete task to complete, follow strict execution mode: do the work first, avoid fake progress, and only claim completion with evidence. For casual chat, normal natural replies are fine; the strict task format is only for actual task requests.
+- When Roshan asks for a concrete deliverable like a URL, file, working command, or test result, treat the request itself as the go-ahead and keep executing until you can provide it or hit a real blocker.
+- Do not answer concrete execution requests with permission-seeking filler like "I can do that now" or "if you want I can continue".
 - Durable OpenClaw debugging rule: when fixing managed agents or embedded agent runs, verify the actual live runtime/session path first instead of assuming an older standalone bot/module path.
 - Durable embedded agent rule: `runEmbeddedPiAgent(...)` workspace/model/auth resolution depends on `agentId`; forcing provider/auth alone is not enough if the runtime inherits the wrong agent context.
 - For new custom OpenClaw slash commands, prefer generating plugins from a reusable scaffold with the Nova agent/workspace/auth context baked in rather than hand-building each one; this reduces context drift and repeated mistakes.

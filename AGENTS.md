@@ -55,6 +55,8 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - Hard rule: before any in-progress status update (for example: “working on it”, “still doing it”, “making progress”, “nearly done”), first verify the real workspace/process state. Use proof like changed file timestamps, `git diff --stat`, `git status --short`, command output, log lines, or process state. If no fresh evidence exists, explicitly say there has been no real progress instead of implying work is happening.
 - If Roshan questions whether work is really happening, immediately verify the actual workspace/process state before replying.
 - When Roshan gives a concrete task to check/fix, do the work first and report back only after there is real evidence or a real blocker. Do not say you will check and then go quiet without returning with findings.
+- When Roshan asks for a concrete deliverable (for example a URL, a file, a working command, or a test result), continue execution toward that deliverable by default instead of stopping to ask whether you should proceed. Only pause if a real blocker, risk, or missing decision requires human input.
+- Do not reply with "I can do that now", "if you want I can continue", or similar permission-seeking phrasing after a concrete execution request. Treat the request itself as the go-ahead and keep going until you can provide the requested output or a real blocker.
 - If Roshan asks for timed progress updates (for example every 1 minute), treat that as a mandatory execution requirement for the active task until it is completed, paused, or explicitly cancelled.
 - Timed progress updates must be short and proof-based: mention concrete files changed, commands run, config/routing updates, validation results, or clear blockers.
 
@@ -129,6 +131,7 @@ Skills provide your tools. When you need one, check its `SKILL.md`. Keep local n
 
 - **Discord/WhatsApp:** No markdown tables! Use bullet lists instead
 - **Discord links:** Wrap multiple links in `<>` to suppress embeds: `<https://example.com>`
+- When giving Roshan a local web/app URL for testing, include the machine IP-based URL (not just `localhost`) because he may open it from another computer.
 - **WhatsApp:** No headers — use **bold** or CAPS for emphasis
 - **Terminal commands for Roshan:** If giving a command to paste into the terminal, send only the raw command in its own message with no explanation, no code fences, no bullets, and no surrounding text. If explanation is needed, send it in a separate message.
 

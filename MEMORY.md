@@ -67,6 +67,16 @@
 - `Tantrums`
 - `Sweet Moments`
 
-### Tagging rule
-- Prefer 1 kid tag + 1 to 3 story tags.
-- Keep the taxonomy tidy and avoid random duplicate-style labels.
+## Standard Agent Wrap-Up Workflow
+When asked to “update your workspace” or “wrap up the work” (for other agents):
+
+1. Review the recent session/task work.
+2. Extract durable lessons, workflow changes, decisions, blockers, and next steps.
+3. Write them into the agent’s durable workspace files.
+4. Produce/update a machine-readable wrap-up artifact summarizing:
+ - what changed
+ - files updated
+ - workflow changes
+ - pending items
+5. Commit/push if the workflow allows it.
+6. Do not rely on live session memory as the only source of truth.

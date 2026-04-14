@@ -1,13 +1,1 @@
-.notion.json
-.wordpress-mayleotales.json
-.env
-.venv/
-.price-tracker-venv/
-__pycache__/
-*.pyc
-.DS_Store
-price-tracker/scripts/__pycache__/
-price-tracker/history/
-model-router-mvp/data/
-model-router-mvp/.env
-plugins/discord-admin/node_modules/
+model-router-mvp/logs/

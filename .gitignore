@@ -1,1 +1,11 @@
+.notion.json
+.openclaw/private/
+.price-tracker-venv/
+.wordpress-mayleotales.json
+model-router-mvp/data/
 model-router-mvp/logs/
+plugins/discord-admin/node_modules/
+price-tracker/history/
+price-tracker/scripts/__pycache__/
+scripts/__pycache__/
+wp-cli.phar

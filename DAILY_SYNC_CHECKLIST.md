@@ -16,10 +16,8 @@ Review recent work and conversation state, capture durable learnings, and keep t
    - `memory/YYYY-MM-DD.md`
    - `MEMORY.md` when something belongs in long-term memory
    - any relevant workflow/checklist file if a new repeatable pattern emerged
-4. Check git status in:
-   - `/home/roshan/.openclaw/workspace-nova`
-   - important active workspaces if they changed recently
-5. Commit durable changes with clear commit messages.
+4. Check git status across the entire workspace (including `managed-agents/`).
+5. Commit all durable changes from the workspace (including `managed-agents/`) with clear commit messages.
 6. Push to GitHub if there are committed changes and a configured remote.
 
 ## Do not do

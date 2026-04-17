@@ -33,6 +33,7 @@
 - Site: `https://mayleotales.wordpress.com`
 - Site name: `Tiny Tales of Leon and Maylee`
 - WordPress automation access is connected and available.
+- Automation is handled by `scripts/wordpress_poster.py` for programmatic posting and image handling.
 - When Roshan shares a kid story or memorable family moment that sounds blog-worthy, default to helping turn it into a Mayleo Tales post.
 - If Roshan asks for a new post, story, or to record something for the site:
   - write it in a cute, human, polished style
